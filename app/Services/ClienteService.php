@@ -3,32 +3,50 @@
 namespace App\Services;
 
 use App\Models\Cliente;
+use Illuminate\Support\Facades\DB;
 
 class ClienteService
 {
-    public function listar()
-    {
-        return Cliente::orderBy('nome')->get();
+    public function __construct(protected N8NService $n8nService) {
+
     }
 
-    public function buscar(int $id)
+
+    /**
+     * Cria um cliente e envia para o n8n.
+     */
+    public function criar(array $dados): Cliente
     {
-        return Cliente::findOrFail($id);
+        return DB::transaction(function () use ($dados) {
+
+            $cliente = Cliente::create($dados);
+
+            $enviado = $this->n8nService->enviarCliente($cliente);
+
+            if (! $enviado) {
+                throw new \Exception('Não foi possível comunicar com o n8n.');
+            }
+
+            return $cliente;
+        });
     }
 
-    public function criar(array $dados)
-    {
-        return Cliente::create($dados);
-    }
 
-    public function atualizar(Cliente $cliente, array $dados)
+    /**
+     * Atualiza um cliente.
+     */
+    public function atualizar(Cliente $cliente, array $dados): Cliente
     {
         $cliente->update($dados);
 
-        return $cliente->fresh();
+        return $cliente;
     }
 
-    public function excluir(Cliente $cliente)
+
+    /**
+     * Exclui um cliente.
+     */
+    public function excluir(Cliente $cliente): void
     {
         $cliente->delete();
     }

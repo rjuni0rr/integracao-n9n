@@ -17,7 +17,15 @@ return new class extends Migration
             $table->string('telefone')->unique();
             $table->string('email')->nullable();
             $table->string('cidade')->nullable();
+
+            // adicionado depois
+            $table->string('status_integracao')->default('pendente');
+            $table->timestamp('enviado_em')->nullable();
+            $table->text('ultima_falha')->nullable();
+
+
             $table->timestamps();
+
         });
     }
 
