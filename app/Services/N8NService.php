@@ -38,7 +38,7 @@ class N8NService
             if ($response->successful()) {
 
                 $cliente->update([
-                    'status_integracao' => 'enviado',
+                    'status_integracao' => Cliente::STATUS_ENVIADO,
                     'enviado_em' => now(),
                     'ultima_falha' => null,
                 ]);
@@ -51,7 +51,7 @@ class N8NService
             }
 
             $cliente->update([
-                'status_integracao' => 'erro',
+                'status_integracao' => Cliente::STATUS_ERRO,
                 'ultima_falha' => $response->body(),
             ]);
 
@@ -66,7 +66,7 @@ class N8NService
         } catch (\Throwable $e) {
 
             $cliente->update([
-                'status_integracao' => 'erro',
+                'status_integracao' => Cliente::STATUS_ERRO,
                 'ultima_falha' => $e->getMessage(),
             ]);
 

@@ -19,7 +19,9 @@ class ClienteService
     {
         return DB::transaction(function () use ($dados) {
 
-            $cliente = Cliente::create($dados);
+            $cliente = Cliente::create([$dados,
+                    'status_integracao' => Cliente::STATUS_PENDENTE,
+                ]);
 
             $enviado = $this->n8nService->enviarCliente($cliente);
 
